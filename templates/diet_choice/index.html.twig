@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Here's you diet!{% endblock %}
+
+{% block body %}
+    {% for set in sets %}
+        <h2>Day {{ loop.index }}</h2>
+        <h3>Breakfast</h3>
+        <p>Name: {{ set.randomBreakfast.name }}</p>
+
+        <h3>Dinner</h3>
+        <p>Name: {{ set.randomDinner.name }}</p>
+
+        <h3>Supper</h3>
+        <p>Name: {{ set.randomSupper.name }}</p>
+        <p>Kcal: {{ set.kcal }}</p>
+        <p>Satisfaction: {{ set.satisfaction }}</p>
+        <hr>
+    {% endfor %}
+    <button onclick="findAnotherMeal()">Find Other Meals</button>
+
+    <script>
+        function findAnotherMeal() {
+            location.reload();
+        }
+    </script>
+{% endblock %}
