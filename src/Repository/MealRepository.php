@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Meal;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,32 +17,26 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class MealRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, Meal::class);
     }
 
-//    /**
-//     * @return Meal[] Returns an array of Meal objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('m')
-//            ->andWhere('m.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('m.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function getRandomMeal (string $mealType, array $criteria, int $i, int $mealSets) : array
+    {
+        $queryBuilder = $this->entityManager->createQueryBuilder();
 
-//    public function findOneBy(): ?Meal
-//    {
-//        return $this->createQueryBuilder('m')
-//            ->andWhere('m.type = :breakfast')
-//            ->getQuery();
-//    }
+        $queryBuilder->select($mealType)
+            ->from(Meal::class, $mealType)
+            ->andWhere($mealType . '.type IN (:types)')
+            ->setParameter('types', $criteria['type']);
+        if ($i === $mealSets) {
+            $queryBuilder->andWhere($mealType . '.doublePortion = :doublePortion')
+                ->setParameter('doublePortion', false);
+        }            $mealType = $queryBuilder->getQuery()->getArrayResult();
+        $randomPick = array_rand($mealType);
+        return $mealType[$randomPick];
+    }
 }
 
 
