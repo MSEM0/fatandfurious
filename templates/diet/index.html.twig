@@ -3,7 +3,7 @@
 {% block title %}Hi!{% endblock %}
 
 {% block body %}
-    <h1>How many days of diet?</h1>
+    <h2>How many days of a diet?</h2>
 
     {{ form_start(form) }}
 
@@ -12,4 +12,28 @@
     {{ form_row(form.submit) }}
 
     {{ form_end(form) }}
+
+    <style>
+        .custom-button {
+            font-size: 18px;
+            padding: 15px 30px;
+            border-radius: 50px;
+            background-color: #ffffff;
+            color: #000000;
+            border: 2px solid #000000;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .custom-button:hover {
+            background-color: #f1f1f1;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+    <div class="top-center" style="position: fixed; top: 25px; left: 40%;">
+        <button onclick="location.href = 'http://127.0.0.1:8000/add';" class="custom-button">
+            Add a new meal
+        </button>
+    </div>
+
+
 {% endblock %}

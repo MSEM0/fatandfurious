@@ -14,7 +14,7 @@ const R_SPR = 'randomSupper';
 
 class DietChoiceService
 {
-    public function __construct(private MealRepository $mealRepository)
+    public function __construct(private readonly MealRepository $mealRepository)
     {
     }
 

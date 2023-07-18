@@ -1,16 +1,31 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Welcome!{% endblock %}</title>
 
-        {% block javascripts %}
-        {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+    {% block stylesheets %}
+    {% endblock %}
+
+    {% block javascripts %}
+    {% endblock %}
+</head>
+<body>
+
+{% block user %}
+    {% set loggedUsersEmail = logged_users_email() %}
+    {% set default = 'not logged' %}
+    <div class="top-right-corner" style="position: absolute; top: 10px; right: 5px;">
+        Logged user: {{ loggedUsersEmail|default(default) }}
+    </div>
+    {% if loggedUsersEmail != (default) and loggedUsersEmail != null%}
+        <div class="top-right-corner" style="position: absolute; top: 35px; right: 5px;">
+            <button onclick="location.href = '/logout';">Logout</button>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+{% endblock %}
+</body>
 </html>

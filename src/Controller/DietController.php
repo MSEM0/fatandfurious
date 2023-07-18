@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Form\DietFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -14,14 +15,7 @@ class DietController extends AbstractController
     #[Route('/diet', name: 'app_diet')]
     public function dietForm(Request $request): Response
     {
-        $form = $this->createFormBuilder()
-            ->add('mealSets', IntegerType::class, [
-                'label' => 'From 1 to 10:',
-                'attr' => ['min' => 1, 'max' => 10],
-            ])
-            ->add('submit', SubmitType::class, ['label' => 'Spin the wheel of fat whores'])
-            ->getForm();
-
+        $form = $this->createform(DietFormType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

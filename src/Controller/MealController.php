@@ -20,7 +20,7 @@ class MealController extends AbstractController
     }
 
     #[Route('/add', name: 'app_meal')]
-    public function create(Request $request): Response
+    public function addMeal(Request $request): Response
     {
         $meal = new Meal();
         $form = $this->createform(MealFormType::class, $meal);
