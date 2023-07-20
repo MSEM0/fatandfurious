@@ -3,11 +3,18 @@
 {% block title %}Hi!{% endblock %}
 
 {% block body %}
+    {% if app.request.query.get('message') %}
+    <div class="alert alert-success">
+        {{ app.request.query.get('message') }}
+    </div>
+    {% endif %}
     <h2>How many days of a diet?</h2>
 
     {{ form_start(form) }}
 
     {{ form_row(form.mealSets) }}
+    <br>
+    {{ form_row(form.date) }}
     <br>
     {{ form_row(form.submit) }}
 

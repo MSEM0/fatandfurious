@@ -4,8 +4,6 @@ namespace App\Controller;
 
 use App\Form\DietFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,8 +19,9 @@ class DietController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $mealSets = $data['mealSets'];
+            $date = $data['date']->format('d-m-Y');
 
-            return $this->redirectToRoute('app_diet_choice', ['mealSets' => $mealSets]);
+            return $this->redirectToRoute('app_diet_choice', ['mealSets' => $mealSets, 'date' => $date]);
         }
 
         return $this->render('diet/index.html.twig', [

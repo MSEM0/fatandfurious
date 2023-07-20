@@ -14,17 +14,17 @@ class Diet
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $date = null;
+    #[ORM\Column]
+    private ?string $date = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?array $breakfast;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $breakfast = null;
+    private ?array $dinner;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $dinner = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $supper = null;
+    private ?array $supper;
 
     #[ORM\Column(nullable: true)]
     private ?int $extraMeals = null;
@@ -40,48 +40,48 @@ class Diet
         return $this->id;
     }
 
-    public function getDate(): ?\DateTimeInterface
+    public function getDate(): ?string
     {
         return $this->date;
     }
 
-    public function setDate(\DateTimeInterface $date): static
+    public function setDate(?string $date): static
     {
         $this->date = $date;
 
         return $this;
     }
 
-    public function getBreakfast(): ?string
+    public function getBreakfast(): ?array
     {
         return $this->breakfast;
     }
 
-    public function setBreakfast(?string $breakfast): static
+    public function setBreakfast(?array $breakfast): static
     {
         $this->breakfast = $breakfast;
 
         return $this;
     }
 
-    public function getDinner(): ?string
+    public function getDinner(): ?array
     {
         return $this->dinner;
     }
 
-    public function setDinner(?string $dinner): static
+    public function setDinner(?array $dinner): static
     {
         $this->dinner = $dinner;
 
         return $this;
     }
 
-    public function getSupper(): ?string
+    public function getSupper(): ?array
     {
         return $this->supper;
     }
 
-    public function setSupper(?string $supper): static
+    public function setSupper(?array $supper): static
     {
         $this->supper = $supper;
 

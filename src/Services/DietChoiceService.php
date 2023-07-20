@@ -21,6 +21,7 @@ class DietChoiceService
 //Gets randomly meal sets (breakfast, dinner and supper) in number of sets, calories and satisfaction picked by the user
     public function getRandomSetsOfMeals(Request $request): array
     {
+        $startDate = $request->attributes->get('date');
         $mealSets = intval($request->attributes->get('mealSets'));
         $i = 1;
         $a = $mealSets - 1;
@@ -48,14 +49,21 @@ class DietChoiceService
             $totalKcal = ${R_BRK}['kcal'] + ${R_DNR}['kcal'] + ${R_SPR}['kcal'];
             $medSatisfaction = (${R_BRK}['satisfaction'] + ${R_DNR}['satisfaction'] + ${R_SPR}['satisfaction']) / 3;
 
+
             if (${R_SPR} != null && $totalKcal > $userMinKcal && $totalKcal < $userMaxKcal && $medSatisfaction > $userMedSatisfaction) {
+                if ($i === 1) {
+                    $date = $startDate;
+                } else {
+                    $date = (new \DateTime($startDate))->modify("+$i day -1 day")->format('d-m-Y');
+                }
                 $i++;
                 $validSets[] = [
                     R_BRK => ${R_BRK},
                     R_DNR => ${R_DNR},
                     R_SPR => ${R_SPR},
                     'kcal' => $totalKcal,
-                    'satisfaction' => $medSatisfaction
+                    'satisfaction' => $medSatisfaction,
+                    'date' => $date
                 ];
             }
         }

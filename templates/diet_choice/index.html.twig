@@ -4,7 +4,7 @@
 
 {% block body %}
     {% for set in sets %}
-        <h2>Day {{ loop.index }}</h2>
+        <h2>Day {{ loop.index }} - {{ set.date }}</h2>
         <h3>Breakfast</h3>
         <p>Name: {{ set.randomBreakfast.name }}</p>
 
@@ -24,4 +24,6 @@
             location.reload();
         }
     </script>
+    <form action="{{ path('app_save_diet') }}" method="post">
+        <button type="submit">Save</button></form>
 {% endblock %}
