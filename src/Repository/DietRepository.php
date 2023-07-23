@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Diet;
 use App\Entity\Meal;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -18,33 +20,14 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DietRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, Diet::class);
     }
 
-//    /**
-//     * @return Diet[] Returns an array of Diet objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('d')
-//            ->andWhere('d.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('d.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Diet
-//    {
-//        return $this->createQueryBuilder('d')
-//            ->andWhere('d.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function isDiedDuplicated(object $user, string $date)
+    {
+        $dietRepository = $this->entityManager->getRepository(Diet::class);
+        return $dietRepository->findOneBy(['user' => $user, 'date' => $date]);
+    }
 }

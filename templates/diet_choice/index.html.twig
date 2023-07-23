@@ -24,6 +24,33 @@
             location.reload();
         }
     </script>
-    <form action="{{ path('app_save_diet') }}" method="post">
-        <button type="submit">Save</button></form>
+
+    <form id="saveDietForm" action="{{ path('app_save_diet') }}" method="post">
+        <button type="submit" id="saveButton">Save</button>
+    </form>
+
+    {% if hasDuplicatedDiets %}
+        <script>
+            const hasDuplicatedDiets = {{ hasDuplicatedDiets ? 'true' : 'false' }};
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const saveButton = document.getElementById('saveButton');
+                saveButton.addEventListener('click', function (event) {
+                    event.preventDefault();
+
+                    if (hasDuplicatedDiets) {
+                        const confirmation = confirm('You already have a diet saved on this date, do you want to overwrite it?');
+                        if (confirmation) {
+                            document.getElementById('saveDietForm').submit();
+                        } else {
+                            window.location.href = "{{ path('app_diet') }}";
+                        }
+                    } else {
+                        document.getElementById('saveDietForm').submit();
+                    }
+                });
+            });
+        </script>
+    {% endif %}
+
 {% endblock %}

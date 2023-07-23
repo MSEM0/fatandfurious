@@ -22,7 +22,7 @@ class MealRepository extends ServiceEntityRepository
         parent::__construct($registry, Meal::class);
     }
 
-    public function getRandomMeal (string $mealType, array $criteria, int $i, int $mealSets) : array
+    public function getRandomMeal(string $mealType, array $criteria, int $i, int $mealSets): array
     {
         $queryBuilder = $this->entityManager->createQueryBuilder();
 
@@ -33,10 +33,12 @@ class MealRepository extends ServiceEntityRepository
         if ($i === $mealSets) {
             $queryBuilder->andWhere($mealType . '.doublePortion = :doublePortion')
                 ->setParameter('doublePortion', false);
-        }            $mealType = $queryBuilder->getQuery()->getArrayResult();
+        }
+        $mealType = $queryBuilder->getQuery()->getArrayResult();
         $randomPick = array_rand($mealType);
         return $mealType[$randomPick];
     }
+
 }
 
 

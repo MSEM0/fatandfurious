@@ -3,9 +3,9 @@
 {% block title %}Hi!{% endblock %}
 
 {% block body %}
-    {% if app.request.query.get('message') %}
+    {% if app.request.query.get('msg-sav') %}
     <div class="alert alert-success">
-        {{ app.request.query.get('message') }}
+        {{ app.request.query.get('msg-sav') }}
     </div>
     {% endif %}
     <h2>How many days of a diet?</h2>
