@@ -8,7 +8,7 @@
         {{ app.request.query.get('msg-sav') }}
     </div>
     {% endif %}
-    <h2>How many days of a diet?</h2>
+    <h2>How many days of a diet to draw?</h2>
 
     {{ form_start(form) }}
 
@@ -41,6 +41,15 @@
             Add a new meal
         </button>
     </div>
-
+    <div class="top-center" style="position: fixed; top: 100px; left: 36%;">
+        <button onclick="location.href = 'http://127.0.0.1:8000/diet/read';" class="custom-button">
+            View your diet and progress
+        </button>
+    </div>
+    <div class="top-center" style="position: fixed; top: 175px; left: 29%;">
+        <button onclick="location.href = 'http://127.0.0.1:8000/diet/extra-meal';" class="custom-button">
+            Additional meals? It's ok to cheat (diet, wife etc.)
+        </button>
+    </div>
 
 {% endblock %}

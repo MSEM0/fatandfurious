@@ -30,4 +30,17 @@ class DietRepository extends ServiceEntityRepository
         $dietRepository = $this->entityManager->getRepository(Diet::class);
         return $dietRepository->findOneBy(['user' => $user, 'date' => $date]);
     }
+
+    public function getDiets($user, $startDate, $endDate)
+    {
+        return $this->createQueryBuilder('d')
+            ->andWhere('d.user = :user')
+            ->andWhere('d.date BETWEEN :startDate AND :endDate')
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getArrayResult();
+    }
 }
+

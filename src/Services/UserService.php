@@ -12,6 +12,10 @@ class UserService extends AbstractController
     {
     }
 
+    public function getLoggedUser()
+    {
+        $user = $this->security->getUser();
+    }
     public function getLoggedUsersEmail(): string|null
     {
         $user = $this->security->getUser();

@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello DietReadController!{% endblock %}
+
+{% block body %}
+
+    <h3>Select date range to view diet history:</h3>
+
+    {{ form_start(form) }}
+
+    {{ form_row(form.startDate) }}
+    <br>
+    {{ form_row(form.endDate) }}
+    <br>
+    {{ form_row(form.submit) }}
+
+    {{ form_end(form) }}
+
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ExtraMealController!{% endblock %}
+
+{% block body %}
+    {{ form_start(form) }}
+
+    {{ form_row(form.date) }}
+    <br>
+    {{ form_row(form.extraMeals) }}
+    <br>
+    {{ form_row(form.submit) }}
+
+    {{ form_end(form) }}
+
+    {% if success %}
+        <script>
+            alert('Extra meals updated successfully!');
+        </script>
+    {% endif %}
+
+{% endblock %}

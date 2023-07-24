@@ -1,0 +1,120 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello DietReadController!{% endblock %}
+
+{% block body %}
+    <h1>Diet history</h1>
+
+    <style>
+        .clickable-date {
+            cursor: pointer;
+            background-color: #f0f0f0;
+            padding: 3px 5px;
+            margin-right: 5px;
+            display: inline-block;
+        }
+
+        #lineGraphContainer {
+            position: fixed;
+            top: 90px;
+            left: 60%;
+            transform: translateX(-50%);
+            z-index: 1;
+            padding: 0;
+            margin: 0;
+        }
+
+        #lineGraph {
+            width: 560px;
+            height: 280px;
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+
+    <body>
+    {% for item in selectedDiets %}
+        <div>
+            <div>
+          <span class="clickable-date" onclick="toggleMeals('{{ item.date }}')">
+            {{ item.date|date("D") }} - {{ item.date }} - kcal {{ item.kcal }}
+          </span>
+            </div>
+            <div id="{{ item.date }}" style="display: none;">
+                <ul>
+                    <li>Breakfast - {{ item.breakfast.name }} (kcal {{ item.breakfast.kcal }})</li>
+                    <li>Dinner - {{ item.dinner.name }} (kcal {{ item.dinner.kcal }})</li>
+                    <li>Supper - {{ item.supper.name }} (kcal {{ item.supper.kcal }})</li>
+                    <li>Extra calories - (kcal {{ item.extraMeals }})</li>
+                </ul>
+            </div>
+        </div>
+    {% endfor %}
+
+    <div class="top-right" style="position: fixed; top: 70px; right: 22px;">
+        <button onclick="location.href = 'http://127.0.0.1:8000/diet/';" class="custom-button">
+            Diet
+        </button>
+    </div>
+<div class="top" style="position: fixed; top: 5px; right: 340px;">
+    {% if totalKcalPerWeek is not null %}
+        <p>Total kcal per week: {{ totalKcalPerWeek }}</p>
+        <p>Daily (avg): {{ (totalKcalPerWeek / 7)|round(0) }} kcal</p>
+    {% endif %}
+</div>
+    {# Google Charts Line Graph Block #}
+    <div id="lineGraphContainer">
+        <div id="lineGraph"></div>
+    </div>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        google.charts.load('current', { 'packages': ['corechart'] });
+        google.charts.setOnLoadCallback(drawLineChart);
+
+        function drawLineChart() {
+            const data = new google.visualization.DataTable();
+            data.addColumn('date', 'Date');
+            data.addColumn('number', 'kcal');
+
+            {% for item in selectedDiets %}
+            data.addRow([new Date('{{ item.date|date("Y-m-d") }}'), {{ item.kcal }}]);
+            {% endfor %}
+
+            const options = {
+                title: null,
+                curveType: 'function',
+                legend: { position: 'none' },
+                vAxis: {
+                    gridlines: { color: 'transparent' },
+                },
+                hAxis: {
+                    format: 'MMM d',
+                    gridlines: { count: -1, units: { days: { format: ['MMM d'] } } },
+                    baselineColor: 'transparent',
+                },
+                explorer: {
+                    axis: 'horizontal',
+                    keepInBounds: true,
+                    maxZoomIn: 1.0,
+                },
+                chartArea: {
+                    width: '88%',
+                    height: '88%',
+                },
+                pointSize: 4,
+                pointsVisible: true,
+                tooltip: { trigger: 'both' },
+            };
+
+            const chart = new google.visualization.LineChart(document.getElementById('lineGraph'));
+            chart.draw(data, options);
+        }
+
+        function toggleMeals(date) {
+            const mealDiv = document.getElementById(date);
+            mealDiv.style.display = mealDiv.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+    </body>
+{% endblock %}
