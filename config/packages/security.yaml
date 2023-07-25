@@ -9,6 +9,7 @@ security:
             entity:
                 class: App\Entity\User
                 property: email
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -24,7 +25,6 @@ security:
                 path: /
                 always_remember_me: true
 
-
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 
@@ -34,9 +34,14 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        # Allow access to '/register', '/login', and '/' for unauthenticated users
+        - { path: ^/(register|login|)$, roles: PUBLIC_ACCESS }
+        - { path: ^/$, roles: PUBLIC_ACCESS }
 
+        # Restrict access to all other routes for authenticated users
+        - { path: ^/, roles: ROLE_USER }
+
+# Optional configuration for "when@test"
 when@test:
     security:
         password_hashers:

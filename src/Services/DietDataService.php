@@ -3,16 +3,16 @@
 namespace App\Services;
 
 use App\Entity\Diet;
-use App\Form\ExtraMealFormType;
 use App\Repository\DietRepository;
-use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use phpDocumentor\Reflection\DocBlock\Tags\Return_;
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\PhpWord;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use App\Enum\Meals;
 
 class DietDataService
 {
@@ -41,11 +41,11 @@ class DietDataService
     public function saveDiet(array $validSets): void
     {
         foreach ($validSets as $set) {
-            $breakfast = $set[R_BRK];
-            $dinner = $set[R_DNR];
-            $supper = $set[R_SPR];
+            $breakfast = $set[Meals::R_BRK];
+            $dinner = $set[Meals::R_DNR];
+            $supper = $set[Meals::R_SPR];
             $date = $set['date'];
-            $kcal = $set[R_BRK]['kcal'] + $set[R_DNR]['kcal'] + $set[R_SPR]['kcal'];
+            $kcal = $set[Meals::R_BRK]['kcal'] + $set[Meals::R_DNR]['kcal'] + $set[Meals::R_SPR]['kcal'];
             $user = $this->security->getUser();
             $duplicatedDiet = $this->dietRepository->isDiedDuplicated($user, $date);
 
@@ -91,7 +91,8 @@ class DietDataService
     }
 
     public function getTotalKcal(array $selectedMeals, int $days): int
-    {   $numberOfDays = 0;
+    {
+        $numberOfDays = 0;
         $totalKcalPerChosenPeriod = 0;
         foreach ($selectedMeals as $daily) {
             $totalKcalPerChosenPeriod += $daily['kcal'];
@@ -104,4 +105,50 @@ class DietDataService
         return $totalKcalPerChosenPeriod;
     }
 
+    public function downloadDiet($selectedDiets)
+    {
+        $phpWord = new PhpWord();
+        $totalDiets = count($selectedDiets);
+        $loopIndex = 1;
+        $section = $phpWord->addSection();
+
+        foreach ($selectedDiets as $diet) {
+            $section->addText('Date: ' . $diet['date']);
+            $section->addText('Breakfast:');
+            $section->addText('Name: ' . $diet[Meals::BRK]['name']);
+            $section->addText('Kcal: ' . $diet[Meals::BRK]['kcal']);
+            $section->addText('Satisfaction: ' . $diet[Meals::BRK]['satisfaction']);
+            $section->addText('Ingredients: ' . $diet[Meals::BRK]['ingredients']);
+            $section->addText('Double Portion: ' . ($diet[Meals::BRK]['doublePortion'] ? 'Yes' : 'No'));
+            $section->addText('');
+
+            $section->addText('Dinner:');
+            $section->addText('Name: ' . $diet[Meals::DNR]['name']);
+            $section->addText('Kcal: ' . $diet[Meals::DNR]['kcal']);
+            $section->addText('Satisfaction: ' . $diet[Meals::DNR]['satisfaction']);
+            $section->addText('Ingredients: ' . $diet[Meals::DNR]['ingredients']);
+            $section->addText('Double Portion: ' . ($diet[Meals::DNR]['doublePortion'] ? 'Yes' : 'No'));
+            $section->addText('');
+
+            $section->addText('Supper:');
+            $section->addText('Name: ' . $diet[Meals::SPR]['name']);
+            $section->addText('Kcal: ' . $diet[Meals::SPR]['kcal']);
+            $section->addText('Satisfaction: ' . $diet[Meals::SPR]['satisfaction']);
+            $section->addText('Ingredients: ' . $diet[Meals::SPR]['ingredients']);
+            $section->addText('Double Portion: ' . ($diet[Meals::SPR]['doublePortion'] ? 'Yes' : 'No'));
+            $section->addText('');
+
+            $section->addText('Total kcal: ' . $diet['kcal']);
+            if ($loopIndex < $totalDiets) {
+                $section->addPageBreak();
+            }
+            $loopIndex++;
+        }
+
+        $objWriter = IOFactory::createWriter($phpWord);
+
+        $objWriter->save('selected_diets.docx');
+
+        return $objWriter;
+    }
 }

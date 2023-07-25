@@ -56,6 +56,8 @@
             Diet
         </button>
     </div>
+    <a href="{{ path('app_diet_read_choice', {'startDate': startDate, 'endDate': endDate}) }}?download=doc" class="btn btn-primary">Download Selected Diets DOC</a>
+
 <div class="top" style="position: fixed; top: 5px; right: 340px;">
     {% if totalKcalPerWeek is not null %}
         <p>Total kcal per week: {{ totalKcalPerWeek }}</p>

@@ -1,55 +1,6 @@
-{% set selectedDiets = [
-    { "date": "2023-07-20", "kcal": 1500 },
-    { "date": "2023-07-21", "kcal": 1800 },
-    { "date": "2023-07-22", "kcal": 2000 },
-    { "date": "2023-07-23", "kcal": 1700 },
-] %}
-
 <!DOCTYPE html>
 <html>
-<head>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-</head>
+{% block title %}Hello DietReadController!{% endblock %}
 <body>
-<div>
-    <div id="lineGraph" style="width: 800px; height: 400px;"></div>
-</div>
-
-<script>
-    google.charts.load('current', { 'packages': ['corechart'] });
-    google.charts.setOnLoadCallback(drawLineChart);
-
-    function drawLineChart() {
-        const data = new google.visualization.DataTable();
-        data.addColumn('date', 'Date');
-        data.addColumn('number', 'Kcal');
-
-        {% for item in selectedDiets %}
-        data.addRow([new Date('{{ item.date|date("Y-m-d") }}'), {{ item.kcal }}]);
-        {% endfor %}
-
-        const options = {
-            title: 'Kcal Over Time',
-            curveType: 'function',
-            legend: { position: 'bottom' },
-            vAxis: { title: 'Kcal' },
-            hAxis: {
-                format: 'MMM d',
-                gridlines: { count: -1, units: { days: { format: ['MMM d'] } } },
-            },
-            explorer: {
-                axis: 'horizontal',
-                keepInBounds: true,
-                maxZoomIn: 4.0,
-            },
-            pointSize: 6, // Size of the data points
-            pointsVisible: true, // Display data points on the line
-            tooltip: { trigger: 'both' }, // Show data points on hover and selection
-        };
-
-        const chart = new google.visualization.LineChart(document.getElementById('lineGraph'));
-        chart.draw(data, options);
-    }
-</script>
 </body>
 </html>

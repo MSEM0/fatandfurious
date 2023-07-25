@@ -2,14 +2,15 @@
 
 namespace App\Controller;
 
-use App\Form\DietFormType;
 use App\Form\DietReadFormType;
 use App\Services\DietDataService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 class DietReadController extends AbstractController
 {
@@ -37,14 +38,40 @@ class DietReadController extends AbstractController
     }
 
     #[Route('/diet/read/{startDate}%{endDate}', name: 'app_diet_read_choice')]
-    public function viewSelectedDiet(Request $request)
-    {   $totalKcalPerWeek = null;
+    public function viewSelectedDiet(Request $request) : Response
+    {   $startDate = $request->attributes->get('startDate');
+        $endDate = $request->attributes->get('endDate');
+        $totalKcalPerWeek = null;
         $selectedDiets = $this->dietDataService->getSelectedDiets($request);
-        if (count($selectedDiets)>=7) {
+        if (count($selectedDiets) >= 7) {
             $totalKcalPerWeek = $this->dietDataService->getTotalKcal($selectedDiets, 7);
         }
 
-        return $this->render('diet_read_choice/index.html.twig', ['selectedDiets' => $selectedDiets,
-        'totalKcalPerWeek'=> $totalKcalPerWeek]);
+        if ($request->query->get('download') === 'doc') {
+            $dietFile = $this->dietDataService->downloadDiet($selectedDiets);
+
+            $tempFilePath = sys_get_temp_dir() . '/' . (new AsciiSlugger())->slug('selected_diets.docx') . '.docx';
+            $dietFile->save($tempFilePath);
+
+            $file = new \SplFileInfo($tempFilePath);
+
+            $response = new BinaryFileResponse($file, 200, array(
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            ));
+
+            $response->setContentDisposition(
+                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                'selected_diets.docx'
+            );
+
+            return $response;
+        }
+
+        return $this->render('diet_read_choice/index.html.twig', [
+            'selectedDiets' => $selectedDiets,
+            'totalKcalPerWeek' => $totalKcalPerWeek,
+            'startDate' => $startDate,
+            'endDate' => $endDate
+        ]);
     }
 }

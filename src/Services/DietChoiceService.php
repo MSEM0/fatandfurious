@@ -2,15 +2,9 @@
 
 namespace App\Services;
 
+use App\Enum\Meals;
 use App\Repository\MealRepository;
 use Symfony\Component\HttpFoundation\Request;
-
-const BRK = 'breakfast';
-const R_BRK = 'randomBreakfast';
-const DNR = 'dinner';
-const R_DNR = 'randomDinner';
-const SPR = 'supper';
-const R_SPR = 'randomSupper';
 
 class DietChoiceService
 {
@@ -31,26 +25,26 @@ class DietChoiceService
 
         while ($i <= $mealSets) {
             $criteria1 = [
-                'type' => ['all', 'breakfast']
+                'type' => ['all', Meals::BRK]
             ];
             $criteria2 = [
-                'type' => ['all', 'dinner']
+                'type' => ['all', Meals::DNR]
             ];
             $criteria3 = [
-                'type' => ['all', 'supper'],
+                'type' => ['all', Meals::SPR],
             ];
 
-            ${R_BRK} = $this->mealRepository->getRandomMeal(BRK, $criteria1, $i, $mealSets);
+            ${Meals::R_BRK} = $this->mealRepository->getRandomMeal(Meals::BRK, $criteria1, $i, $mealSets);
 
-            ${R_DNR} = $this->mealRepository->getRandomMeal(DNR, $criteria2, $i, $mealSets);
+            ${Meals::R_DNR} = $this->mealRepository->getRandomMeal(Meals::DNR, $criteria2, $i, $mealSets);
 
-            ${R_SPR} = $this->mealRepository->getRandomMeal(SPR, $criteria3, $i, $mealSets);
+            ${Meals::R_SPR} = $this->mealRepository->getRandomMeal(Meals::SPR, $criteria3, $i, $mealSets);
 
-            $totalKcal = ${R_BRK}['kcal'] + ${R_DNR}['kcal'] + ${R_SPR}['kcal'];
-            $medSatisfaction = (${R_BRK}['satisfaction'] + ${R_DNR}['satisfaction'] + ${R_SPR}['satisfaction']) / 3;
+            $totalKcal = ${Meals::R_BRK}['kcal'] + ${Meals::R_DNR}['kcal'] + ${Meals::R_SPR}['kcal'];
+            $medSatisfaction = (${Meals::R_BRK}['satisfaction'] + ${Meals::R_DNR}['satisfaction'] + ${Meals::R_SPR}['satisfaction']) / 3;
 
 
-            if (${R_SPR} != null && $totalKcal > $userMinKcal && $totalKcal < $userMaxKcal && $medSatisfaction > $userMedSatisfaction) {
+            if (${Meals::R_DNR} != null && $totalKcal > $userMinKcal && $totalKcal < $userMaxKcal && $medSatisfaction > $userMedSatisfaction) {
                 if ($i === 1) {
                     $date = $startDate;
                 } else {
@@ -58,9 +52,9 @@ class DietChoiceService
                 }
                 $i++;
                 $validSets[] = [
-                    R_BRK => ${R_BRK},
-                    R_DNR => ${R_DNR},
-                    R_SPR => ${R_SPR},
+                    Meals::R_BRK => ${Meals::R_BRK},
+                    Meals::R_DNR => ${Meals::R_DNR},
+                    Meals::R_SPR => ${Meals::R_SPR},
                     'kcal' => $totalKcal,
                     'satisfaction' => $medSatisfaction,
                     'date' => $date
@@ -71,27 +65,27 @@ class DietChoiceService
 //Also avoids overwriting more than one meal
         if ($i >= 3) {
             for ($r = 3; $r <= $i; $r++) {
-                if ($r == 3 && $validSets[$r - 3][R_BRK]['doublePortion'] === true) {
-                    $validSets[$r - 2][R_BRK] = $validSets[$r - 3][R_BRK];
-                } elseif ($validSets[$r - 3][R_BRK]['doublePortion'] === true && $validSets[$r - 3][R_BRK] != $validSets[$r - 4][R_BRK]) {
-                    $validSets[$r - 2][R_BRK] = $validSets[$r - 3][R_BRK];
+                if ($r == 3 && $validSets[$r - 3][Meals::R_BRK]['doublePortion'] === true) {
+                    $validSets[$r - 2][Meals::R_BRK] = $validSets[$r - 3][Meals::R_BRK];
+                } elseif ($validSets[$r - 3][Meals::R_BRK]['doublePortion'] === true && $validSets[$r - 3][Meals::R_BRK] != $validSets[$r - 4][Meals::R_BRK]) {
+                    $validSets[$r - 2][Meals::R_BRK] = $validSets[$r - 3][Meals::R_BRK];
                 }
-                if ($r == 3 && $validSets[$r - 3][R_DNR]['doublePortion'] === true) {
-                    $validSets[$r - 2][R_DNR] = $validSets[$r - 3][R_DNR];
-                } elseif ($validSets[$r - 3][R_DNR]['doublePortion'] === true && $validSets[$r - 3][R_DNR] != $validSets[$r - 4][R_DNR]) {
-                    $validSets[$r - 2][R_DNR] = $validSets[$r - 3][R_DNR];
+                if ($r == 3 && $validSets[$r - 3][Meals::R_DNR]['doublePortion'] === true) {
+                    $validSets[$r - 2][Meals::R_DNR] = $validSets[$r - 3][Meals::R_DNR];
+                } elseif ($validSets[$r - 3][Meals::R_DNR]['doublePortion'] === true && $validSets[$r - 3][Meals::R_DNR] != $validSets[$r - 4][Meals::R_DNR]) {
+                    $validSets[$r - 2][Meals::R_DNR] = $validSets[$r - 3][Meals::R_DNR];
                 }
-                if ($r == 3 && $validSets[$r - 3][R_SPR]['doublePortion'] === true) {
-                    $validSets[$r - 2][R_SPR] = $validSets[$r - 3][R_SPR];
-                } elseif ($validSets[$r - 3][R_SPR]['doublePortion'] === true && $validSets[$r - 3][R_SPR] != $validSets[$r - 4][R_SPR]) {
-                    $validSets[$r - 2][R_SPR] = $validSets[$r - 3][R_SPR];
+                if ($r == 3 && $validSets[$r - 3][Meals::R_SPR]['doublePortion'] === true) {
+                    $validSets[$r - 2][Meals::R_SPR] = $validSets[$r - 3][Meals::R_SPR];
+                } elseif ($validSets[$r - 3][Meals::R_SPR]['doublePortion'] === true && $validSets[$r - 3][Meals::R_SPR] != $validSets[$r - 4][Meals::R_SPR]) {
+                    $validSets[$r - 2][Meals::R_SPR] = $validSets[$r - 3][Meals::R_SPR];
                 }
             }
         }
 //After changes in meal sets because of double portions it calculates again the calories and satisfaction, if they won't match user's requirements, the script runs again for better outcome
         while ($a <= ($mealSets - 1) && $a >= 0) {
-            $totalKcalFixed = $validSets[$a][R_BRK]['kcal'] + $validSets[$a][R_DNR]['kcal'] + $validSets[$a][R_SPR]['kcal'];
-            $medSatisfactionFixed = ($validSets[$a][R_BRK]['satisfaction'] + $validSets[$a][R_DNR]['satisfaction'] + $validSets[$a][R_SPR]['satisfaction']) / 3;
+            $totalKcalFixed = $validSets[$a][Meals::R_BRK]['kcal'] + $validSets[$a][Meals::R_DNR]['kcal'] + $validSets[$a][Meals::R_SPR]['kcal'];
+            $medSatisfactionFixed = ($validSets[$a][Meals::R_BRK]['satisfaction'] + $validSets[$a][Meals::R_DNR]['satisfaction'] + $validSets[$a][Meals::R_SPR]['satisfaction']) / 3;
             $validSets[$a]['kcal'] = $totalKcalFixed;
             $validSets[$a]['satisfaction'] = $medSatisfactionFixed;
             if (($totalKcalFixed < $userMinKcal || $totalKcalFixed > $userMaxKcal) || ($medSatisfactionFixed < $userMedSatisfaction)) {
