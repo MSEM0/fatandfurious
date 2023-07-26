@@ -1,15 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
-use App\Entity\Meal;
-use ContainerBH74LRl\getForm_ChoiceListFactory_CachedService;
-use phpDocumentor\Reflection\PseudoTypes\IntegerRange;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class MealFormType extends AbstractType
 {

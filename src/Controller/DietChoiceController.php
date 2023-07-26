@@ -12,8 +12,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-
-
 class DietChoiceController extends AbstractController
 {
     public function __construct(
@@ -28,7 +26,10 @@ class DietChoiceController extends AbstractController
         $validSets = $this->dietChoiceService->getRandomSetsOfMeals($request);
         $hasDuplicatedDiets = $this->dietDataService->hasDuplicatedDiets($validSets);
         $request->getSession()->getFlashBag()->set('validSets', $validSets);
-        return $this->render('diet_choice/index.html.twig', ['sets' => $validSets, 'hasDuplicatedDiets' => $hasDuplicatedDiets]);
+        return $this->render(
+            'diet_choice/index.html.twig',
+            ['sets' => $validSets, 'hasDuplicatedDiets' => $hasDuplicatedDiets]
+        );
     }
 
     #[Route('/save-diet', name: 'app_save_diet', methods: ["POST"])]

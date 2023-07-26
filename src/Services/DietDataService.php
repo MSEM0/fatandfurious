@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Entity\Diet;
@@ -8,10 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use App\Enum\Meals;
 
 class DietDataService
@@ -90,7 +89,14 @@ class DietDataService
         $this->entityManager->flush();
     }
 
-    public function getTotalKcal(array $selectedMeals, int $days): int
+    public function deleteExtraMeals(string $date): void
+    {
+        $diet = $this->dietRepository->findOneBy(['date' => $date]);
+        $diet->setExtraMeals(null);
+        $this->entityManager->flush();
+    }
+
+    function getTotalKcal(array $selectedMeals, int $days): int
     {
         $numberOfDays = 0;
         $totalKcalPerChosenPeriod = 0;

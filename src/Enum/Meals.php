@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Enum;
 
 enum Meals: string
@@ -10,5 +12,4 @@ enum Meals: string
     public const R_DNR = 'randomDinner';
     public const SPR = 'supper';
     public const R_SPR = 'randomSupper';
-
 }

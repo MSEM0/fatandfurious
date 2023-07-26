@@ -3,19 +3,29 @@
 {% block title %}Hello ExtraMealController!{% endblock %}
 
 {% block body %}
+    <button onclick="window.location.href='http://127.0.0.1:8000/diet';">
+        Go back to diet management
+    </button>
+    <br>
+    <br>
     {{ form_start(form) }}
 
     {{ form_row(form.date) }}
     <br>
     {{ form_row(form.extraMeals) }}
     <br>
-    {{ form_row(form.submit) }}
+    {{ form_row(form.submit) }} {{ form_row(form.delete) }}
 
     {{ form_end(form) }}
 
     {% if success %}
         <script>
             alert('Extra meals updated successfully!');
+        </script>
+    {% endif %}
+    {% if delete %}
+        <script>
+            alert('Extra calories removed successfully!');
         </script>
     {% endif %}
 

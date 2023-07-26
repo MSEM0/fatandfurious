@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\UserRepository;
@@ -34,6 +36,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Diet::class)]
     private Collection $dailyDietKcal;
 
+    #[ORM\Column]
+    private ?int $medSatisfaction = null;
+
+    #[ORM\Column]
+    private ?int $minKcal = null;
+
+    #[ORM\Column]
+    private ?int $maxKcal = null;
+
     public function __construct()
     {
         $this->dailyDietKcal = new ArrayCollection();
@@ -63,7 +74,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     /**
@@ -135,6 +146,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $dailyDietKcal->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getMedSatisfaction(): ?int
+    {
+        return $this->medSatisfaction;
+    }
+
+    public function setMedSatisfaction(int $medSatisfaction): static
+    {
+        $this->medSatisfaction = $medSatisfaction;
+
+        return $this;
+    }
+
+    public function getMinKcal(): ?int
+    {
+        return $this->minKcal;
+    }
+
+    public function setMinKcal(int $minKcal): static
+    {
+        $this->minKcal = $minKcal;
+
+        return $this;
+    }
+
+    public function getMaxKcal(): ?int
+    {
+        return $this->maxKcal;
+    }
+
+    public function setMaxKcal(int $maxKcal): static
+    {
+        $this->maxKcal = $maxKcal;
 
         return $this;
     }

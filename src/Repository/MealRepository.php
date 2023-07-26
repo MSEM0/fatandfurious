@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Meal;
@@ -38,7 +40,4 @@ class MealRepository extends ServiceEntityRepository
         $randomPick = array_rand($mealType);
         return $mealType[$randomPick];
     }
-
 }
-
-

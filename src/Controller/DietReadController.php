@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Form\DietReadFormType;
@@ -38,8 +40,9 @@ class DietReadController extends AbstractController
     }
 
     #[Route('/diet/read/{startDate}%{endDate}', name: 'app_diet_read_choice')]
-    public function viewSelectedDiet(Request $request) : Response
-    {   $startDate = $request->attributes->get('startDate');
+    public function viewSelectedDiet(Request $request): Response
+    {
+        $startDate = $request->attributes->get('startDate');
         $endDate = $request->attributes->get('endDate');
         $totalKcalPerWeek = null;
         $selectedDiets = $this->dietDataService->getSelectedDiets($request);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Enum\Meals;
@@ -8,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class DietChoiceService
 {
-    public function __construct(private readonly MealRepository $mealRepository)
+    public function __construct(private readonly MealRepository $mealRepository, private readonly UserService $userService)
     {
     }
 
@@ -19,9 +21,10 @@ class DietChoiceService
         $mealSets = intval($request->attributes->get('mealSets'));
         $i = 1;
         $a = $mealSets - 1;
-        $userMinKcal = 1500;
-        $userMaxKcal = 1700;
-        $userMedSatisfaction = 3;
+        $usersChoices = $this->userService->getUsersChoices();
+        $userMinKcal = $usersChoices['minKcal'];
+        $userMaxKcal = $usersChoices['maxKcal'];
+        $userMedSatisfaction = $usersChoices['medSatisfaction'];
 
         while ($i <= $mealSets) {
             $criteria1 = [
@@ -42,7 +45,6 @@ class DietChoiceService
 
             $totalKcal = ${Meals::R_BRK}['kcal'] + ${Meals::R_DNR}['kcal'] + ${Meals::R_SPR}['kcal'];
             $medSatisfaction = (${Meals::R_BRK}['satisfaction'] + ${Meals::R_DNR}['satisfaction'] + ${Meals::R_SPR}['satisfaction']) / 3;
-
 
             if (${Meals::R_DNR} != null && $totalKcal > $userMinKcal && $totalKcal < $userMaxKcal && $medSatisfaction > $userMedSatisfaction) {
                 if ($i === 1) {

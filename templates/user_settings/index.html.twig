@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Settings{% endblock %}
+
+{% block body %}
+
+    <button onclick="window.location.href='http://127.0.0.1:8000/diet';">
+        Go back to diet management
+    </button>
+
+    {% set keyMapping = {
+        'minKcal': 'Your minimum calories setting',
+        'maxKcal': 'Your maximum calories setting',
+        'medSatisfaction': "Your minimum daily diet's satisfaction setting (0-10)"
+    } %}
+
+    {% for key, value in usersChoices %}
+        <p>
+            {{ keyMapping[key] }}: <span id="{{ key }}">{{ value }}</span>
+            <button type="button" class="btn btn-primary" onclick="showPopup('{{ key }}')">Edit</button>
+        </p>
+        <div id="editPopup-{{ key }}" style="display: none">
+            <form action="{{ path('app_settings') }}" method="post" onsubmit="saveChoice('{{ key }}')">
+                <label for="newValue-{{ key }}">New Value:</label>
+                <input type="number" id="newValue-{{ key }}" name="newValue">
+                <button type="submit">Save</button>
+                <button type="button" onclick="hidePopup('{{ key }}')">Cancel</button>
+                <input type="hidden" name="choice" value="{{ key }}">
+            </form>
+        </div>
+    {% endfor %}
+
+    <script>
+        function showPopup(choice) {
+            const valueElement = document.getElementById(choice);
+            const newValueInput = document.getElementById('newValue-' + choice);
+
+            newValueInput.value = valueElement.innerText;
+            document.getElementById('editPopup-' + choice).style.display = 'block';
+        }
+
+        function hidePopup(choice) {
+            document.getElementById('editPopup-' + choice).style.display = 'none';
+        }
+
+        function saveChoice(choice) {
+            const newValue = parseInt(document.getElementById('newValue-' + choice).value, 10);
+
+            const data = new URLSearchParams();
+            data.append('choice', choice);
+            data.append('newValue', newValue);
+
+            fetch('/settings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: data,
+            })
+        }
+    </script>
+
+{% endblock %}
