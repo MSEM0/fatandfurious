@@ -24,13 +24,13 @@ class DietRepository extends ServiceEntityRepository
         parent::__construct($registry, Diet::class);
     }
 
-    public function isDiedDuplicated(object $user, string $date)
+    public function isDiedDuplicated(object $user, string $date) : ?Diet
     {
         $dietRepository = $this->entityManager->getRepository(Diet::class);
         return $dietRepository->findOneBy(['user' => $user, 'date' => $date]);
     }
 
-    public function getDiets($user, $startDate, $endDate)
+    public function getDiets(object $user, string $startDate, string $endDate) : array
     {
         return $this->createQueryBuilder('d')
             ->andWhere('d.user = :user')

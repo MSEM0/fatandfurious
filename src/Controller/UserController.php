@@ -24,7 +24,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/settings', name: 'app_settings', methods: ['GET', 'POST'])]
-    public function userSettings(Request $request)
+    public function userSettings(Request $request) : Response
     {
         $usersChoices = $this->userService->getUsersChoices();
 

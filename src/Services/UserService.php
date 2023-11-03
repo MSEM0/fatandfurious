@@ -20,24 +20,20 @@ class UserService extends AbstractController
     {
         $user = $this->security->getUser();
 
-        if ($user) {
-            return $user->getEmail();
-        }
-        return null;
+        return $user?->getEmail();
     }
 
     public function getUsersChoices(): array
     {
         $user = $this->security->getUser();
-        $usersChoices = [
+        return [
             'minKcal' => $user->getMinKcal(),
             'maxKcal' => $user->getMaxKcal(),
             'medSatisfaction' => $user->getMedSatisfaction(),
         ];
-        return $usersChoices;
     }
 
-    public function setUsersChoice(string $choice, int $newValue)
+    public function setUsersChoice(string $choice, int $newValue) : void
     {
         $user = $this->security->getUser();
         $accessor = PropertyAccess::createPropertyAccessor();

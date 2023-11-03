@@ -9,9 +9,14 @@ use App\Repository\DietRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\Style\Font;
+use PhpOffice\PhpWord\Writer\WriterInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use App\Enum\Meals;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 class DietDataService
 {
@@ -96,7 +101,7 @@ class DietDataService
         $this->entityManager->flush();
     }
 
-    function getTotalKcal(array $selectedMeals, int $days): int
+    public function getTotalKcal(array $selectedMeals, int $days): int
     {
         $numberOfDays = 0;
         $totalKcalPerChosenPeriod = 0;
@@ -111,40 +116,38 @@ class DietDataService
         return $totalKcalPerChosenPeriod;
     }
 
-    public function downloadDiet($selectedDiets)
+    public function downloadDiet(array $selectedDiets)
     {
         $phpWord = new PhpWord();
         $totalDiets = count($selectedDiets);
         $loopIndex = 1;
+        $mealTypes = [
+            Meals::BRK,
+            Meals::DNR,
+            Meals::SPR,
+        ];
         $section = $phpWord->addSection();
+        $textStyleBold = new Font();
+        $textStyleLg = new Font();
+        $textStyleLg->setSize(14);
+        $textStyleBold->setBold();
 
         foreach ($selectedDiets as $diet) {
-            $section->addText('Date: ' . $diet['date']);
-            $section->addText('Breakfast:');
-            $section->addText('Name: ' . $diet[Meals::BRK]['name']);
-            $section->addText('Kcal: ' . $diet[Meals::BRK]['kcal']);
-            $section->addText('Satisfaction: ' . $diet[Meals::BRK]['satisfaction']);
-            $section->addText('Ingredients: ' . $diet[Meals::BRK]['ingredients']);
-            $section->addText('Double Portion: ' . ($diet[Meals::BRK]['doublePortion'] ? 'Yes' : 'No'));
+            $section->addText('Date: ' . $diet['date'], $textStyleLg);
             $section->addText('');
 
-            $section->addText('Dinner:');
-            $section->addText('Name: ' . $diet[Meals::DNR]['name']);
-            $section->addText('Kcal: ' . $diet[Meals::DNR]['kcal']);
-            $section->addText('Satisfaction: ' . $diet[Meals::DNR]['satisfaction']);
-            $section->addText('Ingredients: ' . $diet[Meals::DNR]['ingredients']);
-            $section->addText('Double Portion: ' . ($diet[Meals::DNR]['doublePortion'] ? 'Yes' : 'No'));
-            $section->addText('');
-
-            $section->addText('Supper:');
-            $section->addText('Name: ' . $diet[Meals::SPR]['name']);
-            $section->addText('Kcal: ' . $diet[Meals::SPR]['kcal']);
-            $section->addText('Satisfaction: ' . $diet[Meals::SPR]['satisfaction']);
-            $section->addText('Ingredients: ' . $diet[Meals::SPR]['ingredients']);
-            $section->addText('Double Portion: ' . ($diet[Meals::SPR]['doublePortion'] ? 'Yes' : 'No'));
-            $section->addText('');
+            foreach ($mealTypes as $mealType) {
+                $section->addText(ucfirst($mealType) . ':', $textStyleBold);
+                $section->addText('Name: ' . $diet[$mealType]['name']);
+                $section->addText('Kcal: ' . $diet[$mealType]['kcal']);
+                $section->addText('Satisfaction: ' . $diet[$mealType]['satisfaction']);
+                $section->addText('Ingredients: ' . $diet[$mealType]['ingredients']);
+                $section->addText('Double Portion: ' . ($diet[$mealType]['doublePortion'] ? 'Yes' : 'No'));
+                $section->addText('');
+            }
 
             $section->addText('Total kcal: ' . $diet['kcal']);
+
             if ($loopIndex < $totalDiets) {
                 $section->addPageBreak();
             }
@@ -155,6 +158,20 @@ class DietDataService
 
         $objWriter->save('selected_diets.docx');
 
-        return $objWriter;
+        $tempFilePath = sys_get_temp_dir() . '/' . (new AsciiSlugger())->slug('selected_diets.docx') . '.docx';
+        $objWriter->save($tempFilePath);
+        $file = new \SplFileInfo($tempFilePath);
+
+        $response = new BinaryFileResponse($file, 200, array(
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        ));
+
+        $response->setContentDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            'selected_diets.docx'
+        );
+        $response->deleteFileAfterSend();
+
+        return $response;
     }
 }

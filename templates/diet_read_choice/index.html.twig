@@ -56,22 +56,22 @@
             Diet
         </button>
     </div>
-    <a href="{{ path('app_diet_read_choice', {'startDate': startDate, 'endDate': endDate}) }}?download=doc" class="btn btn-primary">Download Selected Diets DOC</a>
+    <a href="{{ path('app_diet_read_choice', {'startDate': startDate, 'endDate': endDate}) }}?download=doc"
+       class="btn btn-primary">Download Selected Diets DOC</a>
 
-<div class="top" style="position: fixed; top: 5px; right: 340px;">
-    {% if totalKcalPerWeek is not null %}
-        <p>Total kcal per week: {{ totalKcalPerWeek }}</p>
-        <p>Daily (avg): {{ (totalKcalPerWeek / 7)|round(0) }} kcal</p>
-    {% endif %}
-</div>
-    {# Google Charts Line Graph Block #}
+    <div class="top" style="position: fixed; top: 5px; right: 340px;">
+        {% if totalKcalPerChosenPeriod is not null %}
+            <p>Total kcal per {{ period }} days : {{ totalKcalPerChosenPeriod }}</p>
+            <p>Daily (avg): {{ (totalKcalPerChosenPeriod / period)|round(0) }} kcal</p>
+        {% endif %}
+    </div>
     <div id="lineGraphContainer">
         <div id="lineGraph"></div>
     </div>
 
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script>
-        google.charts.load('current', { 'packages': ['corechart'] });
+        google.charts.load('current', {'packages': ['corechart']});
         google.charts.setOnLoadCallback(drawLineChart);
 
         function drawLineChart() {
@@ -86,13 +86,13 @@
             const options = {
                 title: null,
                 curveType: 'function',
-                legend: { position: 'none' },
+                legend: {position: 'none'},
                 vAxis: {
-                    gridlines: { color: 'transparent' },
+                    gridlines: {color: 'transparent'},
                 },
                 hAxis: {
                     format: 'MMM d',
-                    gridlines: { count: -1, units: { days: { format: ['MMM d'] } } },
+                    gridlines: {count: -1, units: {days: {format: ['MMM d']}}},
                     baselineColor: 'transparent',
                 },
                 explorer: {
@@ -106,7 +106,7 @@
                 },
                 pointSize: 4,
                 pointsVisible: true,
-                tooltip: { trigger: 'both' },
+                tooltip: {trigger: 'both'},
             };
 
             const chart = new google.visualization.LineChart(document.getElementById('lineGraph'));

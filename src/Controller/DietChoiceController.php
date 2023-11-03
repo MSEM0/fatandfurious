@@ -26,6 +26,7 @@ class DietChoiceController extends AbstractController
         $validSets = $this->dietChoiceService->getRandomSetsOfMeals($request);
         $hasDuplicatedDiets = $this->dietDataService->hasDuplicatedDiets($validSets);
         $request->getSession()->getFlashBag()->set('validSets', $validSets);
+
         return $this->render(
             'diet_choice/index.html.twig',
             ['sets' => $validSets, 'hasDuplicatedDiets' => $hasDuplicatedDiets]
@@ -33,7 +34,7 @@ class DietChoiceController extends AbstractController
     }
 
     #[Route('/save-diet', name: 'app_save_diet', methods: ["POST"])]
-    public function userDietSave(Request $request)
+    public function userDietSave(Request $request) : Response
     {
         $validSets = $request->getSession()->getFlashBag()->get('validSets');
         if ($validSets !== null) {

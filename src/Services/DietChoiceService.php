@@ -63,7 +63,7 @@ class DietChoiceService
                 ];
             }
         }
-//When user pick at least 2 sets, it checks if a meal is prepared as a double portion, if so, then it changes the next day's meal for the previous one
+//When user picks at least 2 sets, it checks if a meal is prepared as a double portion, if so, then it changes the next day's meal for the previous one
 //Also avoids overwriting more than one meal
         if ($i >= 3) {
             for ($r = 3; $r <= $i; $r++) {

@@ -8,6 +8,8 @@ use App\Entity\Meal;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Contracts\Cache\CacheInterface;
+use Predis\Client;
 
 /**
  * @extends ServiceEntityRepository<Meal>
@@ -19,25 +21,38 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class MealRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry, private EntityManagerInterface $entityManager)
+    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, Meal::class);
     }
 
     public function getRandomMeal(string $mealType, array $criteria, int $i, int $mealSets): array
     {
-        $queryBuilder = $this->entityManager->createQueryBuilder();
+        $redis = new Client();
 
-        $queryBuilder->select($mealType)
-            ->from(Meal::class, $mealType)
-            ->andWhere($mealType . '.type IN (:types)')
-            ->setParameter('types', $criteria['type']);
-        if ($i === $mealSets) {
-            $queryBuilder->andWhere($mealType . '.doublePortion = :doublePortion')
-                ->setParameter('doublePortion', false);
+        if (isset($key)) {
+            $jsonArray = $redis->get($key);
+            $mealTypeArray = json_decode($jsonArray, true);
+            $randomIndex = array_rand($mealTypeArray);
+        } else {
+            $key = md5($mealType);
+
+            $queryBuilder = $this->entityManager->createQueryBuilder();
+            $queryBuilder->select($mealType)
+                ->from(Meal::class, $mealType)
+                ->andWhere($mealType . '.type IN (:types)')
+                ->setParameter('types', $criteria['type']);
+
+            if ($i === $mealSets) {
+                $queryBuilder->andWhere($mealType . '.doublePortion = :doublePortion')
+                    ->setParameter('doublePortion', false);
+            }
+            $mealTypeArray = $queryBuilder->getQuery()->getArrayResult();
+            $randomIndex = array_rand($mealTypeArray);
+            $jsonArray = json_encode($mealTypeArray);
+            $redis->set($key, $jsonArray);
         }
-        $mealType = $queryBuilder->getQuery()->getArrayResult();
-        $randomPick = array_rand($mealType);
-        return $mealType[$randomPick];
+        return $mealTypeArray[$randomIndex];
     }
 }
+
