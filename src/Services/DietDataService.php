@@ -89,7 +89,7 @@ class DietDataService
         return $this->dietRepository->getDiets($user, $startDate, $endDate);
     }
 
-    public function extraMealsUpdate(int $extraMeals, string $date, int $extraMealsC, int $extraMealsP, int $extraMealsF): void
+    public function extraMealsUpdate(int|null $extraMeals, string|null $date, int|null $extraMealsC, int|null $extraMealsP, int|null $extraMealsF, string|null $extraMealsComment): void
     {
         $diet = $this->dietRepository->findOneBy(['date' => $date]);
 
@@ -101,6 +101,7 @@ class DietDataService
         $newTotalProteins = $diet->getTotalProteins() + $extraMealsP;
         $newTotalFats = $diet->getTotalFats() + $extraMealsF;
         $diet->setExtraMeals($newExtraMealsValue)
+            ->setExtraMealsComment($extraMealsComment)
             ->setExtraMealsC($extraMealsC)
             ->setExtraMealsF($extraMealsF)
             ->setExtraMealsP($extraMealsP)

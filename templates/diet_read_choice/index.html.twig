@@ -42,11 +42,12 @@
             </div>
             <div id="{{ item.date }}" style="display: none;">
                 <ul>
-                    <li>Breakfast - {{ item.breakfast.name }} (kcal {{ item.breakfast.kcal }})</li>
-                    <li>Dinner - {{ item.dinner.name }} (kcal {{ item.dinner.kcal }})</li>
-                    <li>Supper - {{ item.supper.name }} (kcal {{ item.supper.kcal }})</li>
+                    <li>Breakfast - {{ item.breakfast.name ?? 'No breakfast'}} (kcal {{ item.breakfast.kcal ?? '0' }})</li>
+                    <li>Dinner - {{ item.dinner.name ?? 'No dinner' }} (kcal {{ item.dinner.kcal ?? '0' }})</li>
+                    <li>Supper - {{ item.supper.name ?? 'No supper' }} (kcal {{ item.supper.kcal ?? '0' }})</li>
                     <li>Extra calories - (kcal {{ item.extraMeals }})</li>
                     <li>P: {{ item.totalProteins }}  C: {{ item.totalCarbons }}  F: {{ item.totalFats }}</li>
+                    <li style="max-width: 200px; word-wrap: break-word;">Comment - {{ item.extraMealsComment }}</li>
                 </ul>
             </div>
         </div>

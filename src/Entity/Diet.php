@@ -54,6 +54,9 @@ class Diet
     #[ORM\Column(nullable: true)]
     private ?int $extraMealsP = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $extraMealsComment = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -211,6 +214,18 @@ class Diet
     public function setExtraMealsP(?int $extraMealsP): static
     {
         $this->extraMealsP = $extraMealsP;
+
+        return $this;
+    }
+
+    public function getExtraMealsComment(): ?string
+    {
+        return $this->extraMealsComment;
+    }
+
+    public function setExtraMealsComment(?string $extraMealsComment): static
+    {
+        $this->extraMealsComment = $extraMealsComment;
 
         return $this;
     }

@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class ExtraMealFormType extends AbstractType
@@ -48,6 +48,12 @@ class ExtraMealFormType extends AbstractType
             ])
             ->add('delete', SubmitType::class, [
                 'label' => "Delete selected day's value",
+            ])
+            ->add('extraMealsComment', TextType::class, [
+                'label' => "Add a comment:",
+                'required' => false,
+                'empty_data' => null,
             ]);
+
     }
 }
