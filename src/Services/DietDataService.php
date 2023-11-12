@@ -51,6 +51,9 @@ class DietDataService
             $date = $set['date'];
             $kcal = $set[Meals::R_BRK]['kcal'] + $set[Meals::R_DNR]['kcal'] + $set[Meals::R_SPR]['kcal'];
             $user = $this->security->getUser();
+            $totalCarbons = $set['carbons'];
+            $totalProteins = $set['proteins'];
+            $totalFats = $set['fats'];
             $duplicatedDiet = $this->dietRepository->isDiedDuplicated($user, $date);
 
             if (!empty($duplicatedDiet)) {
@@ -58,6 +61,9 @@ class DietDataService
                 $duplicatedDiet->setDinner($dinner);
                 $duplicatedDiet->setSupper($supper);
                 $duplicatedDiet->setKcal($kcal);
+                $duplicatedDiet->setTotalCarbons($totalCarbons);
+                $duplicatedDiet->setTotalProteins($totalProteins);
+                $duplicatedDiet->setTotalFats($totalFats);
             } else {
                 $dietSet = new Diet();
                 $dietSet->setBreakfast($breakfast);
@@ -66,6 +72,9 @@ class DietDataService
                 $dietSet->setDate($date);
                 $dietSet->setKcal($kcal);
                 $dietSet->setUser($user);
+                $dietSet->setTotalCarbons($totalCarbons);
+                $dietSet->setTotalProteins($totalProteins);
+                $dietSet->setTotalFats($totalFats);
                 $this->entityManager->persist($dietSet);
             }
         }
@@ -80,7 +89,7 @@ class DietDataService
         return $this->dietRepository->getDiets($user, $startDate, $endDate);
     }
 
-    public function extraMealsUpdate(int $extraMeals, string $date): void
+    public function extraMealsUpdate(int $extraMeals, string $date, int $extraMealsC, int $extraMealsP, int $extraMealsF): void
     {
         $diet = $this->dietRepository->findOneBy(['date' => $date]);
 
@@ -88,8 +97,17 @@ class DietDataService
         $currentKcal = $diet->getKcal();
         $newExtraMealsValue = $currentExtraMeals + $extraMeals;
         $newKcal = $currentKcal + $extraMeals;
-        $diet->setExtraMeals($newExtraMealsValue);
-        $diet->setKcal($newKcal);
+        $newTotalCarbons = $diet->getTotalCarbons() + $extraMealsC;
+        $newTotalProteins = $diet->getTotalProteins() + $extraMealsP;
+        $newTotalFats = $diet->getTotalFats() + $extraMealsF;
+        $diet->setExtraMeals($newExtraMealsValue)
+            ->setExtraMealsC($extraMealsC)
+            ->setExtraMealsF($extraMealsF)
+            ->setExtraMealsP($extraMealsP)
+            ->setKcal($newKcal)
+            ->setTotalCarbons($newTotalCarbons)
+            ->setTotalProteins($newTotalProteins)
+            ->setTotalFats($newTotalFats);
 
         $this->entityManager->flush();
     }
@@ -97,7 +115,19 @@ class DietDataService
     public function deleteExtraMeals(string $date): void
     {
         $diet = $this->dietRepository->findOneBy(['date' => $date]);
-        $diet->setExtraMeals(null);
+        $newKcal = $diet->getKcal() - $diet->getExtraMeals();
+        $newFats = $diet->getTotalFats() - $diet->getExtraMealsF();
+        $newCarbons = $diet->getTotalCarbons() - $diet->getExtraMealsC();
+        $newProteins = $diet->getTotalProteins() - $diet->getExtraMealsP();
+
+        $diet->setExtraMealsP(null)
+            ->setExtraMealsC(null)
+            ->setExtraMealsF(null)
+            ->setExtraMeals(null)
+            ->setKcal($newKcal)
+            ->setTotalFats($newFats)
+            ->setTotalProteins($newProteins)
+            ->setTotalCarbons($newCarbons);
         $this->entityManager->flush();
     }
 

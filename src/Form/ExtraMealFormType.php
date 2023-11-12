@@ -22,13 +22,29 @@ class ExtraMealFormType extends AbstractType
                 'empty_data' => null,
 
             ])
+            ->add('extraMealsF', IntegerType::class, [
+                'label' => 'Total fats of extra meals: ',
+                'required' => false,
+                'empty_data' => null,
+
+            ])->add('extraMealsP', IntegerType::class, [
+                'label' => 'Total proteins of extra meals: ',
+                'required' => false,
+                'empty_data' => null,
+
+            ])->add('extraMealsC', IntegerType::class, [
+                'label' => 'Total carbons of extra meals: ',
+                'required' => false,
+                'empty_data' => null,
+
+            ])
             ->add('date', DateType::class, [
                 'label' => 'Cheat date: ',
                 'widget' => 'single_text',
 
             ])
             ->add('submit', SubmitType::class, [
-                'label' => ' Add extra meals kcal '
+                'label' => ' Add extra meals '
             ])
             ->add('delete', SubmitType::class, [
                 'label' => "Delete selected day's value",

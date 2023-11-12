@@ -10,8 +10,10 @@ use Symfony\Component\HttpFoundation\Request;
 
 class DietChoiceService
 {
-    public function __construct(private readonly MealRepository $mealRepository, private readonly UserService $userService)
-    {
+    public function __construct(
+        private readonly MealRepository $mealRepository,
+        private readonly UserService $userService
+    ) {
     }
 
 //Gets randomly meal sets (breakfast, dinner and supper) in number of sets, calories and satisfaction picked by the user
@@ -45,6 +47,9 @@ class DietChoiceService
 
             $totalKcal = ${Meals::R_BRK}['kcal'] + ${Meals::R_DNR}['kcal'] + ${Meals::R_SPR}['kcal'];
             $medSatisfaction = (${Meals::R_BRK}['satisfaction'] + ${Meals::R_DNR}['satisfaction'] + ${Meals::R_SPR}['satisfaction']) / 3;
+            $totalFats = ${Meals::R_BRK}['fats'] + ${Meals::R_DNR}['fats'] + ${Meals::R_SPR}['fats'];
+            $totalCarbons = ${Meals::R_BRK}['carbons'] + ${Meals::R_DNR}['carbons'] + ${Meals::R_SPR}['carbons'];
+            $totalProteins = ${Meals::R_BRK}['proteins'] + ${Meals::R_DNR}['proteins'] + ${Meals::R_SPR}['proteins'];
 
             if (${Meals::R_DNR} != null && $totalKcal > $userMinKcal && $totalKcal < $userMaxKcal && $medSatisfaction > $userMedSatisfaction) {
                 if ($i === 1) {
@@ -59,7 +64,10 @@ class DietChoiceService
                     Meals::R_SPR => ${Meals::R_SPR},
                     'kcal' => $totalKcal,
                     'satisfaction' => $medSatisfaction,
-                    'date' => $date
+                    'date' => $date,
+                    'fats' => $totalFats,
+                    'carbons' => $totalCarbons,
+                    'proteins' => $totalProteins
                 ];
             }
         }
@@ -88,8 +96,14 @@ class DietChoiceService
         while ($a <= ($mealSets - 1) && $a >= 0) {
             $totalKcalFixed = $validSets[$a][Meals::R_BRK]['kcal'] + $validSets[$a][Meals::R_DNR]['kcal'] + $validSets[$a][Meals::R_SPR]['kcal'];
             $medSatisfactionFixed = ($validSets[$a][Meals::R_BRK]['satisfaction'] + $validSets[$a][Meals::R_DNR]['satisfaction'] + $validSets[$a][Meals::R_SPR]['satisfaction']) / 3;
+            $totalFatsFixed = $validSets[$a][Meals::R_BRK]['fats'] + $validSets[$a][Meals::R_DNR]['fats'] + $validSets[$a][Meals::R_SPR]['fats'];
+            $totalProteinsFixed = $validSets[$a][Meals::R_BRK]['proteins'] + $validSets[$a][Meals::R_DNR]['proteins'] + $validSets[$a][Meals::R_SPR]['proteins'];
+            $totalCarbonsFixed = $validSets[$a][Meals::R_BRK]['carbons'] + $validSets[$a][Meals::R_DNR]['carbons'] + $validSets[$a][Meals::R_SPR]['carbons'];
             $validSets[$a]['kcal'] = $totalKcalFixed;
             $validSets[$a]['satisfaction'] = $medSatisfactionFixed;
+            $validSets[$a]['fats'] = $totalFatsFixed;
+            $validSets[$a]['proteins'] = $totalProteinsFixed;
+            $validSets[$a]['carbons'] = $totalCarbonsFixed;
             if (($totalKcalFixed < $userMinKcal || $totalKcalFixed > $userMaxKcal) || ($medSatisfactionFixed < $userMedSatisfaction)) {
                 return $this->getRandomSetsOfMeals($request);
             }

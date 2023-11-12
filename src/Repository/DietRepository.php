@@ -30,7 +30,7 @@ class DietRepository extends ServiceEntityRepository
         return $dietRepository->findOneBy(['user' => $user, 'date' => $date]);
     }
 
-    public function getDiets(object $user, string $startDate, string $endDate) : array
+    public function getDiets(object $user, string $startDate, string $endDate) : ?array
     {
         return $this->createQueryBuilder('d')
             ->andWhere('d.user = :user')

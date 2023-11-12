@@ -38,7 +38,10 @@ class ExtraMealController extends AbstractController
                 ]);
             }
             $extraMeals = $data['extraMeals'];
-            $this->dietDataService->extraMealsUpdate($extraMeals, $date);
+            $extraMealsP = $data['extraMealsP'];
+            $extraMealsC = $data['extraMealsC'];
+            $extraMealsF = $data['extraMealsF'];
+            $this->dietDataService->extraMealsUpdate($extraMeals, $date, $extraMealsP, $extraMealsC, $extraMealsF);
             $form = $this->createForm(ExtraMealFormType::class);
 
 

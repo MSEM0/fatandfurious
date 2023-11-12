@@ -49,8 +49,6 @@ class MealRepository extends ServiceEntityRepository
             }
             $mealTypeArray = $queryBuilder->getQuery()->getArrayResult();
             $randomIndex = array_rand($mealTypeArray);
-            $jsonArray = json_encode($mealTypeArray);
-            $redis->set($key, $jsonArray);
         }
         return $mealTypeArray[$randomIndex];
     }

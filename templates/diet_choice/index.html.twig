@@ -15,10 +15,12 @@
         <p>Name: {{ set.randomSupper.name }}</p>
         <p>Kcal: {{ set.kcal }}</p>
         <p>Satisfaction: {{ set.satisfaction }}</p>
+        <p>F: {{ set.fats }}</p>
+        <p>C: {{ set.carbons }}</p>
+        <p>P: {{ set.proteins }}</p>
         <hr>
     {% endfor %}
     <button onclick="findAnotherMeal()">Find Other Meals</button>
-
     <script>
         function findAnotherMeal() {
             location.reload();

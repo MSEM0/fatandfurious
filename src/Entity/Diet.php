@@ -36,6 +36,24 @@ class Diet
     #[ORM\ManyToOne(inversedBy: 'dailyDietKcal')]
     private ?User $user = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $totalFats = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $totalCarbons = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $totalProteins = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $extraMealsF = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $extraMealsC = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $extraMealsP = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -121,6 +139,78 @@ class Diet
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getTotalFats(): ?int
+    {
+        return $this->totalFats;
+    }
+
+    public function setTotalFats(?int $totalFats): static
+    {
+        $this->totalFats = $totalFats;
+
+        return $this;
+    }
+
+    public function getTotalCarbons(): ?int
+    {
+        return $this->totalCarbons;
+    }
+
+    public function setTotalCarbons(?int $totalCarbons): static
+    {
+        $this->totalCarbons = $totalCarbons;
+
+        return $this;
+    }
+
+    public function getTotalProteins(): ?int
+    {
+        return $this->totalProteins;
+    }
+
+    public function setTotalProteins(?int $totalProteins): static
+    {
+        $this->totalProteins = $totalProteins;
+
+        return $this;
+    }
+
+    public function getExtraMealsF(): ?int
+    {
+        return $this->extraMealsF;
+    }
+
+    public function setExtraMealsF(?int $extraMealsF): static
+    {
+        $this->extraMealsF = $extraMealsF;
+
+        return $this;
+    }
+
+    public function getExtraMealsC(): ?int
+    {
+        return $this->extraMealsC;
+    }
+
+    public function setExtraMealsC(?int $extraMealsC): static
+    {
+        $this->extraMealsC = $extraMealsC;
+
+        return $this;
+    }
+
+    public function getExtraMealsP(): ?int
+    {
+        return $this->extraMealsP;
+    }
+
+    public function setExtraMealsP(?int $extraMealsP): static
+    {
+        $this->extraMealsP = $extraMealsP;
 
         return $this;
     }

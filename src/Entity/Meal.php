@@ -33,6 +33,15 @@ class Meal
     #[ORM\Column(nullable: true)]
     private ?bool $doublePortion = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $fats = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $carbons = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $proteins = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -106,6 +115,42 @@ class Meal
     public function setDoublePortion(?bool $doublePortion): static
     {
         $this->doublePortion = $doublePortion;
+
+        return $this;
+    }
+
+    public function getFats(): ?int
+    {
+        return $this->fats;
+    }
+
+    public function setFats(?int $fats): static
+    {
+        $this->fats = $fats;
+
+        return $this;
+    }
+
+    public function getCarbons(): ?int
+    {
+        return $this->carbons;
+    }
+
+    public function setCarbons(?int $carbons): static
+    {
+        $this->carbons = $carbons;
+
+        return $this;
+    }
+
+    public function getProteins(): ?int
+    {
+        return $this->proteins;
+    }
+
+    public function setProteins(?int $proteins): static
+    {
+        $this->proteins = $proteins;
 
         return $this;
     }
